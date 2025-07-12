@@ -89,6 +89,7 @@ public class MiniMaxBlack {
         return moves;
     }
 
+
     public static List<String> blackMoves(String board) {
         List<String> moves = new ArrayList<>();
         int w1 = Character.getNumericValue(board.charAt(0));
@@ -96,19 +97,22 @@ public class MiniMaxBlack {
         int b1 = Character.getNumericValue(board.charAt(2));
         int b2 = Character.getNumericValue(board.charAt(3));
 
-        if (b1 != 0) {
-            if (b1 == 1) moves.add(w1 + w2 + "0" + b2);  // direct to goal
-            else if (b1 - 1 != b2 && b1 - 1 != w1 && b1 - 1 != w2) moves.add(w1 + "" + w2 + (b1 - 1) + b2);  // step back         
-            else if (b1 - 2 >= 0 && (b1 - 2 != b2 && b1 - 2 != w1 && b1 + 2 != w2)) moves.add(w1 + "" + w2 + (b1 - 2)  + b2);  // jump back or to goal
-            }    
+        if (b1 != 0) {            
+            if (b1 == 1) moves.add("" + w1 + w2 + "0" + b2);           
+            if (b1 - 1 >= 1 && b1 - 1 != w1 && b1 - 1 != w2 && b1 - 1 != b2) moves.add("" + w1 + w2 + (b1 - 1) + b2);
+            if (b1 - 2 == 0) moves.add("" + w1 + w2 + "0" + b2);
+            else if (b1 - 2 >= 1 && b1 - 2 != w1 && b1 - 2 != w2 && b1 - 2 != b2) moves.add("" + w1 + w2 + (b1 - 2) + b2);
+        }
 
         if (b2 != 0) {
-            if (b2 == 1) moves.add(w1 + w2 + b1 + "0");          
-            else if (b2 - 1 != b1 && b2 - 1 != w1 && b2 - 1 != w2) moves.add(w1 + ""  + b1 + (b2-1)); 
-            else if (b2 - 2 >= 0 && (b2 - 2 != b1 && b2 - 2 != w1 && b2 - 2 != w2)) moves.add(w1 + "" + w2 + b1 + (b2 - 2));
+            if (b2 == 1) moves.add("" + w1 + w2 + b1 + "0");            
+            if (b2 - 1 >= 1 && b2 - 1 != w1 && b2 - 1 != w2 && b2 - 1 != b1) moves.add("" + w1 + w2 + b1 + (b2 - 1));            
+            if (b2 - 2 == 0) moves.add("" + w1 + w2 + b1 + "0");
+            else if (b2 - 2 >= 1 && b2 - 2 != w1 && b2 - 2 != w2 && b2 - 2 != b1) moves.add("" + w1 + w2 + b1 + (b2 - 2));
         }
-    return moves;
-}
+        
+        return moves;
+    }
 
 
 
