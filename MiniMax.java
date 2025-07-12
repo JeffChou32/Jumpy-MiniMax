@@ -69,76 +69,74 @@ public class MiniMax {
         return bestScore;                                           // return the best found score
     }
 
-public static List<String> whiteMoves(String board) {
-    List<String> moves = new ArrayList<>();
-    int w1 = Character.getNumericValue(board.charAt(0));
-    int w2 = Character.getNumericValue(board.charAt(1));
-    int b1 = Character.getNumericValue(board.charAt(2));
-    int b2 = Character.getNumericValue(board.charAt(3));
+    public static List<String> whiteMoves(String board) {
+        List<String> moves = new ArrayList<>();
+        int w1 = Character.getNumericValue(board.charAt(0));
+        int w2 = Character.getNumericValue(board.charAt(1));
+        int b1 = Character.getNumericValue(board.charAt(2));
+        int b2 = Character.getNumericValue(board.charAt(3));
 
-    // W1 move
-    if (w1 != 9) {
-        if (w1 == 8) {
-            moves.add("9" + w2 + b1 + b2);
-        } else if (w1 + 1 != b1 && w1 + 1 != b2  && w1 + 1 != w2) {
-            moves.add((w1 + 1) + "" + w2 + b1 + b2);
-        } else if ((w1 + 2 != b1 && w1 + 2 != b2 && w1 + 2 != w2) || w1 + 2 == 9) {
-            int newW1 = w1 + 2;
-            if (w1 + 1 == b1) {
-                if (8 != w1 && 8 != w2 && 8 != b2) b1 = 8;
-                else if (7 != w1 && 7 != w2 && 7 != b2) b1 = 7;
-                else if (6 != w1 && 6 != w2 && 6 != b2) b1 = 6;
-                else if (5 != w1 && 5 != w2 && 5 != b2) b1 = 5;
+        // W1 move
+        if (w1 != 9) {
+            if (w1 == 8) {
+                moves.add("9" + w2 + b1 + b2);
+            } else if (w1 + 1 != b1 && w1 + 1 != b2  && w1 + 1 != w2) {
+                moves.add((w1 + 1) + "" + w2 + b1 + b2);
+            } else if ((w1 + 2 != b1 && w1 + 2 != b2 && w1 + 2 != w2) || w1 + 2 == 9) {
+                int newW1 = w1 + 2;
+                if (w1 + 1 == b1) {
+                    if (8 != w1 && 8 != w2 && 8 != b2) b1 = 8;
+                    else if (7 != w1 && 7 != w2 && 7 != b2) b1 = 7;
+                    else if (6 != w1 && 6 != w2 && 6 != b2) b1 = 6;
+                    else if (5 != w1 && 5 != w2 && 5 != b2) b1 = 5;
+                }
+                if (w1 + 1 == b2) {
+                    if (8 != w1 && 8 != w2 && 8 != b1) b2 = 8;
+                    else if (7 != w1 && 7 != w2 && 7 != b1) b2 = 7;
+                    else if (6 != w1 && 6 != w2 && 6 != b1) b2 = 6;
+                    else if (5 != w1 && 5 != w2 && 5 != b1) b2 = 5;
+                }
+                moves.add(newW1 + "" + w2 + b1 + b2);
+            } else if ((w1 + 3 != w2 && w1 + 3 != b1 && w1 + 3 != b2) || w1 + 3 == 9) {
+                moves.add((w1 + 3) + "" + w2 + b1 + b2);
+            } else if ((w1 + 4 != w2 && w1 + 4 != b1 && w1 + 4 != b2) || w1 + 4 == 9) {
+                moves.add((w1 + 4) + "" + w2 + b1 + b2);
+            } else if ((w1 + 5 != w2 && w1 + 5 != b1 && w1 + 5 != b2) || w1 + 5 == 9) {
+                moves.add((w1 + 5) + "" + w2 + b1 + b2);
             }
-            if (w1 + 1 == b2) {
-                if (8 != w1 && 8 != w2 && 8 != b1) b2 = 8;
-                else if (7 != w1 && 7 != w2 && 7 != b1) b2 = 7;
-                else if (6 != w1 && 6 != w2 && 6 != b1) b2 = 6;
-                else if (5 != w1 && 5 != w2 && 5 != b1) b2 = 5;
-            }
-            moves.add(newW1 + "" + w2 + b1 + b2);
-        } else if ((w1 + 3 != w2 && w1 + 3 != b1 && w1 + 3 != b2) || w1 + 3 == 9) {
-            moves.add((w1 + 3) + "" + w2 + b1 + b2);
-        } else if ((w1 + 4 != w2 && w1 + 4 != b1 && w1 + 4 != b2) || w1 + 4 == 9) {
-            moves.add((w1 + 4) + "" + w2 + b1 + b2);
-        } else if ((w1 + 5 != w2 && w1 + 5 != b1 && w1 + 5 != b2) || w1 + 5 == 9) {
-            moves.add((w1 + 5) + "" + w2 + b1 + b2);
         }
-    }
 
-    // W2 move
-    if (w2 != 9) {
-        if (w2 == 8) {
-            moves.add(w1 + "9" + b1 + b2);
-        } else if (w2 + 1 != w1 && w2 + 1 != b1 && w2 + 1 != b2) {
-            moves.add(w1 + "" + (w2 + 1) + b1 + b2);
-        } else if ((w2 + 2 != w1 && w2 + 2 != b1 && w2 + 2 != b2) || w2 + 2 == 9) {
-            int newW2 = w2 + 2;
-            if (w2 + 1 == b1) {
-                if (8 != w1 && 8 != w2 && 8 != b2) b1 = 8;
-                else if (7 != w1 && 7 != w2 && 7 != b2) b1 = 7;
-                else if (6 != w1 && 6 != w2 && 6 != b2) b1 = 6;
-                else if (5 != w1 && 5 != w2 && 5 != b2) b1 = 5;
+        // W2 move
+        if (w2 != 9) {
+            if (w2 == 8) {
+                moves.add(w1 + "9" + b1 + b2);
+            } else if (w2 + 1 != w1 && w2 + 1 != b1 && w2 + 1 != b2) {
+                moves.add(w1 + "" + (w2 + 1) + b1 + b2);
+            } else if ((w2 + 2 != w1 && w2 + 2 != b1 && w2 + 2 != b2) || w2 + 2 == 9) {
+                int newW2 = w2 + 2;
+                if (w2 + 1 == b1) {
+                    if (8 != w1 && 8 != w2 && 8 != b2) b1 = 8;
+                    else if (7 != w1 && 7 != w2 && 7 != b2) b1 = 7;
+                    else if (6 != w1 && 6 != w2 && 6 != b2) b1 = 6;
+                    else if (5 != w1 && 5 != w2 && 5 != b2) b1 = 5;
+                }
+                if (w2 + 1 == b2) {
+                    if (8 != w1 && 8 != w2 && 8 != b1) b2 = 8;
+                    else if (7 != w1 && 7 != w2 && 7 != b1) b2 = 7;
+                    else if (6 != w1 && 6 != w2 && 6 != b1) b2 = 6;
+                    else if (5 != w1 && 5 != w2 && 5 != b1) b2 = 5;
+                }
+                moves.add(w1 + "" + newW2 + b1 + b2);
+            } else if ((w2 + 3 != w1 && w2 + 3 != b1 && w2 + 3 != b2) || w2 + 3 == 9) {
+                moves.add(w1 + "" + (w2 + 3) + b1 + b2);
+            } else if ((w2 + 4 != w1 && w2 + 4 != b1 && w2 + 4 != b2) || w2 + 4 == 9) {
+                moves.add(w1 + "" + (w2 + 4) + b1 + b2);
+            } else if ((w2 + 5 != w1 && w2 + 5 != b1 && w2 + 5 != b2) || w2 + 5 == 9) {
+                moves.add(w1 + "" + (w2 + 5) + b1 + b2);
             }
-            if (w2 + 1 == b2) {
-                if (8 != w1 && 8 != w2 && 8 != b1) b2 = 8;
-                else if (7 != w1 && 7 != w2 && 7 != b1) b2 = 7;
-                else if (6 != w1 && 6 != w2 && 6 != b1) b2 = 6;
-                else if (5 != w1 && 5 != w2 && 5 != b1) b2 = 5;
-            }
-            moves.add(w1 + "" + newW2 + b1 + b2);
-        } else if ((w2 + 3 != w1 && w2 + 3 != b1 && w2 + 3 != b2) || w2 + 3 == 9) {
-            moves.add(w1 + "" + (w2 + 3) + b1 + b2);
-        } else if ((w2 + 4 != w1 && w2 + 4 != b1 && w2 + 4 != b2) || w2 + 4 == 9) {
-            moves.add(w1 + "" + (w2 + 4) + b1 + b2);
-        } else if ((w2 + 5 != w1 && w2 + 5 != b1 && w2 + 5 != b2) || w2 + 5 == 9) {
-            moves.add(w1 + "" + (w2 + 5) + b1 + b2);
         }
+        return moves;
     }
-
-    return moves;
-}
-
 
     public static int staticEst(String board) {
         int white1 = Character.getNumericValue(board.charAt(0));
