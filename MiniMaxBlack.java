@@ -109,23 +109,18 @@ public class MiniMaxBlack {
             if (b2 - 1 >= 1 && b2 - 1 != w1 && b2 - 1 != w2 && b2 - 1 != b1) moves.add("" + w1 + w2 + b1 + (b2 - 1));            
             if (b2 - 2 == 0) moves.add("" + w1 + w2 + b1 + "0");
             else if (b2 - 2 >= 1 && b2 - 2 != w1 && b2 - 2 != w2 && b2 - 2 != b1) moves.add("" + w1 + w2 + b1 + (b2 - 2));
-        }
-        
+        }        
         return moves;
     }
 
-
-
-
     public static int staticEst(String board) {
-        int w1 = Character.getNumericValue(board.charAt(0));
-        int w2 = Character.getNumericValue(board.charAt(1));
-        int b1 = Character.getNumericValue(board.charAt(2));
-        int b2 = Character.getNumericValue(board.charAt(3));
+        int white1 = Character.getNumericValue(board.charAt(0));
+        int white2 = Character.getNumericValue(board.charAt(1));
+        int black1 = Character.getNumericValue(board.charAt(2));
+        int black2 = Character.getNumericValue(board.charAt(3));
 
-        if (w1 == 9 && w2 == 9) return 100;         // White wins
-        if (b1 == 0 && b2 == 0) return -100;       // Black wins
-
-        return w1 + w2 - b1 - b2;                  // heuristic: White progress - Black progress
+        if (white1 == 9 || white2 == 9) return 100;               // white wins
+        if (black1 == 0 || black2 == 0) return -100;             // black wins
+        return white1 + white2 + black1 + black2 - 18;           
     }
 }

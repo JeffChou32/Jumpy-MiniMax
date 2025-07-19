@@ -145,14 +145,10 @@ public class MiniMaxImproved {
         int b1 = Character.getNumericValue(board.charAt(2));
         int b2 = Character.getNumericValue(board.charAt(3));
 
-        if (w1 == 9 && w2 == 9) return 100;               // white wins
-        if (b1 == 0 && b2 == 0) return -100;             // black wins
-        int whiteScore = (int)Math.pow(w1, 2) + (int)Math.pow(w2, 2);
-        int blackScore = (int)Math.pow(8 - b1, 2) + (int)Math.pow(8 - b2, 2);
-        if (w1 != 9) whiteScore += 5;
-        if (w2 != 9) whiteScore += 5;
-        if (b1 != 0) blackScore += 5;
-        if (b2 != 0) blackScore += 5;
+        if (w1 == 9 || w2 == 9) return Integer.MAX_VALUE;               
+        if (b1 == 0 || b2 == 0) return Integer.MIN_VALUE;             
+        int whiteScore = w1 * w1 + w2 * w2;                         // squared: 8 to 9 (near goal) is weighted much more than 2 to 3
+        int blackScore = (8 - b1) * (8 - b1) + (8 - b2) * (8 - b2); 
 
         return whiteScore - blackScore;
     }       

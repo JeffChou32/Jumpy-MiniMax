@@ -27,7 +27,7 @@ public class AlphaBeta {
             evalCount++;
         } else {
             for (String nextBoard : whiteMoves(startBoard)) {        // generate all white moves
-                int moveScore = MinMax(nextBoard, maxDepth - 1, Integer.MIN_VALUE, Integer.MAX_VALUE);
+                int moveScore = minimax(nextBoard, maxDepth - 1, Integer.MIN_VALUE, Integer.MAX_VALUE, false);
                 if (moveScore > bestScore) {                         // update if better
                     bestScore = moveScore;
                     bestBoard = nextBoard;
@@ -45,46 +45,37 @@ public class AlphaBeta {
         writer.close();
     }
 
-    public static int MaxMin(String board, int depth, int alpha, int beta) {
+    public static int minimax(String board, int depth, int alpha, int beta, boolean isMaximizingPlayer) {
         if (depth == 0) {
             evalCount++;
             return staticEst(board);
         }
 
-        List<String> nextMoves = whiteMoves(board);
-        if (nextMoves.isEmpty()) {
+        List<String> moves = whiteMoves(board);  // only white moves required by project
+        if (moves.isEmpty()) {
             evalCount++;
             return staticEst(board);
         }
 
-        int v = Integer.MIN_VALUE;
-        for (String move : nextMoves) {
-            v = Math.max(v, MinMax(move, depth - 1, alpha, beta));
-            if (v >= beta) return v;        // β-cut
-            alpha = Math.max(alpha, v);     // update α
+        if (isMaximizingPlayer) {
+            int maxEval = Integer.MIN_VALUE;
+            for (String child : moves) {
+                int eval = minimax(child, depth - 1, alpha, beta, false);
+                maxEval = Math.max(maxEval, eval);
+                alpha = Math.max(alpha, eval);
+                if (beta <= alpha) break;  // b cut
+            }
+            return maxEval;
+        } else {
+            int minEval = Integer.MAX_VALUE;
+            for (String child : moves) {
+                int eval = minimax(child, depth - 1, alpha, beta, true);
+                minEval = Math.min(minEval, eval);
+                beta = Math.min(beta, eval);
+                if (beta <= alpha) break;  // a cut
+            }
+            return minEval;
         }
-        return v;
-    }
-
-    public static int MinMax(String board, int depth, int alpha, int beta) {
-        if (depth == 0) {
-            evalCount++;
-            return staticEst(board);
-        }
-
-        List<String> nextMoves = whiteMoves(board);  // only white moves (project does not require black moves)
-        if (nextMoves.isEmpty()) {
-            evalCount++;
-            return staticEst(board);
-        }
-
-        int v = Integer.MAX_VALUE;
-        for (String move : nextMoves) {
-            v = Math.min(v, MaxMin(move, depth - 1, alpha, beta));
-            if (v <= alpha) return v;       // α-cut
-            beta = Math.min(beta, v);       // update β
-        }
-        return v;
     }
 
     public static List<String> whiteMoves(String board) {
@@ -163,8 +154,8 @@ public class AlphaBeta {
         int black1 = Character.getNumericValue(board.charAt(2));
         int black2 = Character.getNumericValue(board.charAt(3));
 
-        if (white1 == 9 && white2 == 9) return 100;               // white wins
-        if (black1 == 0 && black2 == 0) return -100;             // black wins
+        if (white1 == 9 || white2 == 9) return 100;               // white wins
+        if (black1 == 0 || black2 == 0) return -100;             // black wins
         return white1 + white2 + black1 + black2 - 18;           
     }
 }

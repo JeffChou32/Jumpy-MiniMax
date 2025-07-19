@@ -144,8 +144,8 @@ public class MiniMax {
         int black1 = Character.getNumericValue(board.charAt(2));
         int black2 = Character.getNumericValue(board.charAt(3));
 
-        if (white1 == 9 && white2 == 9) return 100;               // white wins
-        if (black1 == 0 && black2 == 0) return -100;             // black wins
+        if (white1 == 9 || white2 == 9) return 100;               // white wins
+        if (black1 == 0 || black2 == 0) return -100;             // black wins
         return white1 + white2 + black1 + black2 - 18;           
     }
 }
