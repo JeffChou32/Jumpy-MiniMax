@@ -3,79 +3,84 @@ import java.util.*;
 
 public class AlphaBeta {
 
-    static int evalCount = 0;  // counter to track how many positions we evaluated
+    static int count = 0;  //counter to track how many positions we evaluated
 
     public static void main(String[] args) throws IOException {
-        if (args.length != 3) {                                       // check for correct number of arguments
+        if (args.length != 3) {                                    
             System.out.println("needs 3 args: <inputfile.txt> <outputfile.txt> <maxDepth>");
             return;
         }
 
-        String inputFile = args[0];                                   // input file name
-        String outputFile = args[1];                                  // output file name
-        int maxDepth = Integer.parseInt(args[2]);                     // max depth
+        String inputFile = args[0];                              
+        String outputFile = args[1];                                 
+        int maxDepth = Integer.parseInt(args[2]);               
 
         BufferedReader reader = new BufferedReader(new FileReader(inputFile));
-        String startBoard = reader.readLine().trim();                 // read board
+        String startBoard = reader.readLine().trim();               
         reader.close();
 
-        String bestBoard = startBoard;                               // to store best board we find
-        int bestScore = Integer.MIN_VALUE;                           // stores best score found
+        String bestBoard = startBoard;      //to store best board we find
+        int bestScore = Integer.MIN_VALUE;  //stores best score found
 
         if (maxDepth == 0) {                                         
             bestScore = staticEst(startBoard);
-            evalCount++;
+            count++;
         } else {
-            for (String nextBoard : whiteMoves(startBoard)) {        // generate all white moves
-                int moveScore = minimax(nextBoard, maxDepth - 1, Integer.MIN_VALUE, Integer.MAX_VALUE, false);
-                if (moveScore > bestScore) {                         // update if better
-                    bestScore = moveScore;
+            for (String nextBoard : whiteMoves(startBoard)) {    //generate all white moves
+                int score = MinMax(nextBoard, maxDepth - 1, Integer.MIN_VALUE, Integer.MAX_VALUE);
+                if (score > bestScore) {                         //update if better
+                    bestScore = score;
                     bestBoard = nextBoard;
                 }
             }
         }
 
-        System.out.println("Board Position: " + bestBoard);          // print best board found
-        System.out.println("Positions evaluated by static estimation: " + evalCount + ".");
+        System.out.println("Board Position: " + bestBoard);         
+        System.out.println("Positions evaluated by static estimation: " + count + ".");
         System.out.println("MINIMAX estimate: " + bestScore + ".");
 
         BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile));
-        writer.write(bestBoard);                                     // write best board to output file
+        writer.write(bestBoard);                                    
         writer.newLine();
         writer.close();
     }
 
-    public static int minimax(String board, int depth, int alpha, int beta, boolean isMaximizingPlayer) {
-        if (depth == 0) {
-            evalCount++;
+    public static int MaxMin(String board, int depth, int alpha, int beta) {
+        if (depth == 0 || isTerminal(board)) {
+            count++;
             return staticEst(board);
         }
 
-        List<String> moves = whiteMoves(board);  // only white moves required by project
-        if (moves.isEmpty()) {
-            evalCount++;
+        int v = Integer.MIN_VALUE;
+        for (String child : whiteMoves(board)) {
+            v = Math.max(v, MinMax(child, depth - 1, alpha, beta));
+            if (v >= beta) return v;  // β cut
+            alpha = Math.max(alpha, v);
+        }
+        return v;
+    }
+
+    public static int MinMax(String board, int depth, int alpha, int beta) {
+        if (depth == 0 || isTerminal(board)) {
+            count++;
             return staticEst(board);
         }
 
-        if (isMaximizingPlayer) {
-            int maxEval = Integer.MIN_VALUE;
-            for (String child : moves) {
-                int eval = minimax(child, depth - 1, alpha, beta, false);
-                maxEval = Math.max(maxEval, eval);
-                alpha = Math.max(alpha, eval);
-                if (beta <= alpha) break;  // b cut
-            }
-            return maxEval;
-        } else {
-            int minEval = Integer.MAX_VALUE;
-            for (String child : moves) {
-                int eval = minimax(child, depth - 1, alpha, beta, true);
-                minEval = Math.min(minEval, eval);
-                beta = Math.min(beta, eval);
-                if (beta <= alpha) break;  // a cut
-            }
-            return minEval;
+        int v = Integer.MAX_VALUE;
+        for (String child : blackMoves(board)) {
+            v = Math.min(v, MaxMin(child, depth - 1, alpha, beta));
+            if (v <= alpha) return v;  // α cut
+            beta = Math.min(beta, v);
         }
+        return v;
+    }
+
+    public static boolean isTerminal(String board) {
+        int w1 = Character.getNumericValue(board.charAt(0));
+        int w2 = Character.getNumericValue(board.charAt(1));
+        int b1 = Character.getNumericValue(board.charAt(2));
+        int b2 = Character.getNumericValue(board.charAt(3));
+        return (w1 == 9 || w2 == 9 || b1 == 0 || b2 == 0);
     }
 
     public static List<String> whiteMoves(String board) {
@@ -85,11 +90,10 @@ public class AlphaBeta {
         int b1 = Character.getNumericValue(board.charAt(2));
         int b2 = Character.getNumericValue(board.charAt(3));
 
-        // W1 move
         if (w1 != 9) {
             if (w1 == 8) {
                 moves.add("9" + w2 + b1 + b2);
-            } else if (w1 + 1 != b1 && w1 + 1 != b2 && w1 + 1 != w2) {
+            } else if (w1 + 1 != b1 && w1 + 1 != b2  && w1 + 1 != w2) {
                 moves.add((w1 + 1) + "" + w2 + b1 + b2);
             } else if ((w1 + 2 != b1 && w1 + 2 != b2 && w1 + 2 != w2) || w1 + 2 == 9) {
                 int newW1 = w1 + 2;
@@ -115,7 +119,6 @@ public class AlphaBeta {
             }
         }
 
-        // W2 move
         if (w2 != 9) {
             if (w2 == 8) {
                 moves.add(w1 + "9" + b1 + b2);
@@ -144,7 +147,61 @@ public class AlphaBeta {
                 moves.add(w1 + "" + (w2 + 5) + b1 + b2);
             }
         }
+        return moves;
+    }
 
+    public static List<String> blackMoves(String board) {
+        List<String> moves = new ArrayList<>();
+        int w1 = Character.getNumericValue(board.charAt(0));
+        int w2 = Character.getNumericValue(board.charAt(1));
+        int b1 = Character.getNumericValue(board.charAt(2));
+        int b2 = Character.getNumericValue(board.charAt(3));
+
+        if (b1 != 0) {
+            if (b1 == 1) {
+                moves.add("" + w1 + w2 + "0" + b2);
+            } else if (b1 - 1 != w1 && b1 - 1 != w2 && b1 - 1 != b2) {
+                moves.add("" + w1 + w2 + (b1 - 1) + b2);
+            } else if ((b1 - 2 != w1 && b1 - 2 != w2 && b1 - 2 != b2) || b1 - 2 == 0) {
+                int newB1 = b1 - 2;
+                if (b1 - 1 == w1) {
+                    if (1 != b1 && 1 != b2 && 1 != w2) w1 = 1;
+                    else if (2 != b1 && 2 != b2 && 2 != w2) w1 = 2;
+                    else if (3 != b1 && 3 != b2 && 3 != w2) w1 = 3;
+                    else if (4 != b1 && 4 != b2 && 4 != w2) w1 = 4;
+                }
+                if (b1 - 1 == w2) {
+                    if (1 != b1 && 1 != b2 && 1 != w1) w2 = 1;
+                    else if (2 != b1 && 2 != b2 && 2 != w1) w2 = 2;
+                    else if (3 != b1 && 3 != b2 && 3 != w1) w2 = 3;
+                    else if (4 != b1 && 4 != b2 && 4 != w1) w2 = 4;
+                }
+                moves.add("" + w1 + w2 + newB1 + b2);
+            }
+        }
+
+        if (b2 != 0) {
+            if (b2 == 1) {
+                moves.add("" + w1 + w2 + b1 + "0");
+            } else if (b2 - 1 != w1 && b2 - 1 != w2 && b2 - 1 != b1) {
+                moves.add("" + w1 + w2 + b1 + (b2 - 1));
+            } else if ((b2 - 2 != w1 && b2 - 2 != w2 && b2 - 2 != b1) || b2 - 2 == 0) {
+                int newB2 = b2 - 2;
+                if (b2 - 1 == w1) {
+                    if (1 != b1 && 1 != b2 && 1 != w2) w1 = 1;
+                    else if (2 != b1 && 2 != b2 && 2 != w2) w1 = 2;
+                    else if (3 != b1 && 3 != b2 && 3 != w2) w1 = 3;
+                    else if (4 != b1 && 4 != b2 && 4 != w2) w1 = 4;
+                }
+                if (b2 - 1 == w2) {
+                    if (1 != b1 && 1 != b2 && 1 != w1) w2 = 1;
+                    else if (2 != b1 && 2 != b2 && 2 != w1) w2 = 2;
+                    else if (3 != b1 && 3 != b2 && 3 != w1) w2 = 3;
+                    else if (4 != b1 && 4 != b2 && 4 != w1) w2 = 4;
+                }
+                moves.add("" + w1 + w2 + b1 + newB2);
+            }
+        }
         return moves;
     }
 
@@ -154,8 +211,8 @@ public class AlphaBeta {
         int black1 = Character.getNumericValue(board.charAt(2));
         int black2 = Character.getNumericValue(board.charAt(3));
 
-        if (white1 == 9 || white2 == 9) return 100;               // white wins
-        if (black1 == 0 || black2 == 0) return -100;             // black wins
+        if (white1 == 9 && white2 == 9) return 100;              //white wins
+        if (black1 == 0 && black2 == 0) return -100;             //black wins
         return white1 + white2 + black1 + black2 - 18;           
     }
 }

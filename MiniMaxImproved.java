@@ -3,33 +3,33 @@ import java.util.*;
 
 public class MiniMaxImproved {
 
-    static int evalCount = 0;  // counter to track how many positions we evaluated
+    static int count = 0;  //counter to track how many positions we evaluated
 
     public static void main(String[] args) throws IOException {
-        if (args.length != 3) {                                       // check for correct number of arguments
+        if (args.length != 3) {          
             System.out.println("needs 3 args: <inputfile.txt> <outputfile.txt> <maxDepth>");
             return;
         }
 
-        String inputFile = args[0];                                   // input file name
-        String outputFile = args[1];                                  // output file name
-        int maxDepth = Integer.parseInt(args[2]);                     // max depth
+        String inputFile = args[0];                                   
+        String outputFile = args[1];                                  
+        int maxDepth = Integer.parseInt(args[2]);                     
 
         BufferedReader reader = new BufferedReader(new FileReader(inputFile));
-        String startBoard = reader.readLine().trim();                 // read board
+        String startBoard = reader.readLine().trim();                 
         reader.close();
 
-        String bestBoard = startBoard;                               // to store best board we find
-        int bestScore = 0;                                           // stores best score found
+        String bestBoard = startBoard;  //to store best board we find
+        int bestScore = 0;              //stores best score found
 
         if (maxDepth == 0) {                                         
             bestScore = staticEst(startBoard);
-            evalCount++;
+            count++;
         } else {
-            int highestSoFar = Integer.MIN_VALUE;                    // track highest score across moves
-            for (String nextBoard : whiteMoves(startBoard)) {     // generate all white moves
-                int moveScore = miniMax(nextBoard, maxDepth - 1, false); // run minimax from next position
-                if (moveScore > highestSoFar) {                      // update if better
+            int highestSoFar = Integer.MIN_VALUE;                   //track highest score across moves
+            for (String nextBoard : whiteMoves(startBoard)) {       //generate all white moves
+                int moveScore = MinMax(nextBoard, maxDepth - 1);    //run minimax from next position
+                if (moveScore > highestSoFar) {                     //update if better
                     highestSoFar = moveScore;
                     bestBoard = nextBoard;
                 }
@@ -37,36 +37,45 @@ public class MiniMaxImproved {
             bestScore = highestSoFar;
         }
 
-        System.out.println("Board Position: " + bestBoard);          // print best board found
-        System.out.println("Positions evaluated by static estimation: " + evalCount + ".");
+        System.out.println("Board Position: " + bestBoard);        
+        System.out.println("Positions evaluated by static estimation: " + count + ".");
         System.out.println("MINIMAX estimate: " + bestScore + ".");
 
         BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile));
-        writer.write(bestBoard);                                     // write best board to output file
+        writer.write(bestBoard);                                     
         writer.newLine();
         writer.close();
     }
 
-    public static int miniMax(String board, int depth, boolean isWhiteTurn) {
-        if (depth == 0) {                                            // base case
-            evalCount++;
+    public static int MaxMin(String board, int depth) {
+        if (depth == 0 || isTerminal(board)) {
+            count++;
             return staticEst(board);
         }
-
-        int bestScore = isWhiteTurn ? Integer.MIN_VALUE : Integer.MAX_VALUE;
-        List<String> nextMoves = isWhiteTurn ? whiteMoves(board) : new ArrayList<>(); // only white moves here
-        if (nextMoves.isEmpty()) {
-            evalCount++;
-            return staticEst(board);  // fallback to static evaluation
+        int v = Integer.MIN_VALUE;
+        for (String child : whiteMoves(board)) {
+            v = Math.max(v, MinMax(child, depth - 1));
         }
+        return v;
+    }
 
-        for (String move : nextMoves) {
-            int score = miniMax(move, depth - 1, !isWhiteTurn);     // flip player turn each call
-            if (isWhiteTurn) bestScore = Math.max(bestScore, score);
-            else bestScore = Math.min(bestScore, score);
+    public static int MinMax(String board, int depth) {
+        if (depth == 0 || isTerminal(board)) {
+            count++;
+            return staticEst(board);
         }
-
-        return bestScore;                                           // return the best found score
+        int v = Integer.MAX_VALUE;
+        for (String child : blackMoves(board)) {
+            v = Math.min(v, MaxMin(child, depth - 1));
+        }
+        return v;
+    }
+    public static boolean isTerminal(String board) {
+        int w1 = Character.getNumericValue(board.charAt(0));
+        int w2 = Character.getNumericValue(board.charAt(1));
+        int b1 = Character.getNumericValue(board.charAt(2));
+        int b2 = Character.getNumericValue(board.charAt(3));
+        return (w1 == 9 || w2 == 9 || b1 == 0 || b2 == 0);
     }
 
     public static List<String> whiteMoves(String board) {
@@ -76,7 +85,6 @@ public class MiniMaxImproved {
         int b1 = Character.getNumericValue(board.charAt(2));
         int b2 = Character.getNumericValue(board.charAt(3));
 
-        // W1 move
         if (w1 != 9) {
             if (w1 == 8) {
                 moves.add("9" + w2 + b1 + b2);
@@ -106,7 +114,6 @@ public class MiniMaxImproved {
             }
         }
 
-        // W2 move
         if (w2 != 9) {
             if (w2 == 8) {
                 moves.add(w1 + "9" + b1 + b2);
@@ -138,6 +145,62 @@ public class MiniMaxImproved {
         return moves;
     }
 
+    public static List<String> blackMoves(String board) {
+        List<String> moves = new ArrayList<>();
+        int w1 = Character.getNumericValue(board.charAt(0));
+        int w2 = Character.getNumericValue(board.charAt(1));
+        int b1 = Character.getNumericValue(board.charAt(2));
+        int b2 = Character.getNumericValue(board.charAt(3));
+
+        // B1 move
+        if (b1 != 0) {
+            if (b1 == 1) {
+                moves.add("" + w1 + w2 + "0" + b2);
+            } else if (b1 - 1 != w1 && b1 - 1 != w2 && b1 - 1 != b2) {
+                moves.add("" + w1 + w2 + (b1 - 1) + b2);
+            } else if ((b1 - 2 != w1 && b1 - 2 != w2 && b1 - 2 != b2) || b1 - 2 == 0) {
+                int newB1 = b1 - 2;
+                if (b1 - 1 == w1) {
+                    if (1 != b1 && 1 != b2 && 1 != w2) w1 = 1;
+                    else if (2 != b1 && 2 != b2 && 2 != w2) w1 = 2;
+                    else if (3 != b1 && 3 != b2 && 3 != w2) w1 = 3;
+                    else if (4 != b1 && 4 != b2 && 4 != w2) w1 = 4;
+                }
+                if (b1 - 1 == w2) {
+                    if (1 != b1 && 1 != b2 && 1 != w1) w2 = 1;
+                    else if (2 != b1 && 2 != b2 && 2 != w1) w2 = 2;
+                    else if (3 != b1 && 3 != b2 && 3 != w1) w2 = 3;
+                    else if (4 != b1 && 4 != b2 && 4 != w1) w2 = 4;
+                }
+                moves.add("" + w1 + w2 + newB1 + b2);
+            }
+        }
+
+        if (b2 != 0) {
+            if (b2 == 1) {
+                moves.add("" + w1 + w2 + b1 + "0");
+            } else if (b2 - 1 != w1 && b2 - 1 != w2 && b2 - 1 != b1) {
+                moves.add("" + w1 + w2 + b1 + (b2 - 1));
+            } else if ((b2 - 2 != w1 && b2 - 2 != w2 && b2 - 2 != b1) || b2 - 2 == 0) {
+                int newB2 = b2 - 2;
+                if (b2 - 1 == w1) {
+                    if (1 != b1 && 1 != b2 && 1 != w2) w1 = 1;
+                    else if (2 != b1 && 2 != b2 && 2 != w2) w1 = 2;
+                    else if (3 != b1 && 3 != b2 && 3 != w2) w1 = 3;
+                    else if (4 != b1 && 4 != b2 && 4 != w2) w1 = 4;
+                }
+                if (b2 - 1 == w2) {
+                    if (1 != b1 && 1 != b2 && 1 != w1) w2 = 1;
+                    else if (2 != b1 && 2 != b2 && 2 != w1) w2 = 2;
+                    else if (3 != b1 && 3 != b2 && 3 != w1) w2 = 3;
+                    else if (4 != b1 && 4 != b2 && 4 != w1) w2 = 4;
+                }
+                moves.add("" + w1 + w2 + b1 + newB2);
+            }
+        }
+        return moves;
+    }
+
 
     public static int staticEst(String board) {
         int w1 = Character.getNumericValue(board.charAt(0));
@@ -145,8 +208,8 @@ public class MiniMaxImproved {
         int b1 = Character.getNumericValue(board.charAt(2));
         int b2 = Character.getNumericValue(board.charAt(3));
 
-        if (w1 == 9 || w2 == 9) return Integer.MAX_VALUE;               
-        if (b1 == 0 || b2 == 0) return Integer.MIN_VALUE;             
+        if (w1 == 9 && w2 == 9) return Integer.MAX_VALUE;               
+        if (b1 == 0 && b2 == 0) return Integer.MIN_VALUE;             
         int whiteScore = w1 * w1 + w2 * w2;                         // squared: 8 to 9 (near goal) is weighted much more than 2 to 3
         int blackScore = (8 - b1) * (8 - b1) + (8 - b2) * (8 - b2); 
 
