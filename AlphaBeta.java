@@ -46,7 +46,12 @@ public class AlphaBeta {
     }
 
     public static int MaxMin(String board, int depth, int alpha, int beta) {
-        if (depth == 0 || isTerminal(board)) {
+        if (depth == 0 || isGameOver(board)) {
+            count++;
+            return staticEst(board);
+        }
+        List<String> children = whiteMoves(board);
+        if (children.isEmpty()) {
             count++;
             return staticEst(board);
         }
@@ -54,28 +59,32 @@ public class AlphaBeta {
         int v = Integer.MIN_VALUE;
         for (String child : whiteMoves(board)) {
             v = Math.max(v, MinMax(child, depth - 1, alpha, beta));
-            if (v >= beta) return v;  // β cut
+            if (v >= beta) return v;  
             alpha = Math.max(alpha, v);
         }
         return v;
     }
 
     public static int MinMax(String board, int depth, int alpha, int beta) {
-        if (depth == 0 || isTerminal(board)) {
+        if (depth == 0 || isGameOver(board)) {
             count++;
             return staticEst(board);
         }
-
+        List<String> children = blackMoves(board);
+        if (children.isEmpty()) {
+            count++;
+            return staticEst(board);
+        }
         int v = Integer.MAX_VALUE;
         for (String child : blackMoves(board)) {
             v = Math.min(v, MaxMin(child, depth - 1, alpha, beta));
-            if (v <= alpha) return v;  // α cut
+            if (v <= alpha) return v;  
             beta = Math.min(beta, v);
         }
         return v;
     }
 
-    public static boolean isTerminal(String board) {
+    public static boolean isGameOver(String board) {
         int w1 = Character.getNumericValue(board.charAt(0));
         int w2 = Character.getNumericValue(board.charAt(1));
         int b1 = Character.getNumericValue(board.charAt(2));

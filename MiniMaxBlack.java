@@ -48,7 +48,7 @@ public class MiniMaxBlack {
     }
 
     public static int MaxMin(String board, int depth) {
-        if (depth == 0 || isTerminal(board)) {
+        if (depth == 0 || isGameOver(board)) {
             count++;
             return staticEst(board);
         }
@@ -60,7 +60,7 @@ public class MiniMaxBlack {
     }
 
     public static int MinMax(String board, int depth) {
-        if (depth == 0 || isTerminal(board)) {
+        if (depth == 0 || isGameOver(board)) {
             count++;
             return staticEst(board);
         }
@@ -71,7 +71,7 @@ public class MiniMaxBlack {
         return v;
     }
 
-    public static boolean isTerminal(String board) {
+    public static boolean isGameOver(String board) {
         int w1 = Character.getNumericValue(board.charAt(0));
         int w2 = Character.getNumericValue(board.charAt(1));
         int b1 = Character.getNumericValue(board.charAt(2));

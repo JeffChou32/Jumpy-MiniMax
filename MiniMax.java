@@ -48,9 +48,14 @@ public class MiniMax {
     }
 
     public static int MaxMin(String board, int depth) {
-        if (depth == 0 || isTerminal(board)) {
+        if (depth == 0 || isGameOver(board)) {
             count++;
             return staticEst(board);
+        }
+        List<String> children = whiteMoves(board);
+        if (children.isEmpty()) {
+            count++;
+            return staticEst(board);  //no moves
         }
         int v = Integer.MIN_VALUE;
         for (String child : whiteMoves(board)) {
@@ -60,9 +65,14 @@ public class MiniMax {
     }
 
     public static int MinMax(String board, int depth) {
-        if (depth == 0 || isTerminal(board)) {
+        if (depth == 0 || isGameOver(board)) {
             count++;
             return staticEst(board);
+        }
+        List<String> children = blackMoves(board);
+        if (children.isEmpty()) {
+            count++;
+            return staticEst(board);  //no moves
         }
         int v = Integer.MAX_VALUE;
         for (String child : blackMoves(board)) {
@@ -70,7 +80,8 @@ public class MiniMax {
         }
         return v;
     }
-    public static boolean isTerminal(String board) {
+
+    public static boolean isGameOver(String board) {
         int w1 = Character.getNumericValue(board.charAt(0));
         int w2 = Character.getNumericValue(board.charAt(1));
         int b1 = Character.getNumericValue(board.charAt(2));
