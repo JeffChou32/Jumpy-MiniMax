@@ -89,6 +89,20 @@ public class MiniMax {
         return (w1 == 9 || w2 == 9 || b1 == 0 || b2 == 0);
     }
 
+    public static int findPositionBlack(int w1, int w2, int b1, int b2) {
+        for (int i = 8; i > 4; i--) {
+            if (i != w1 && i != w2 && i != b1 && i != b2) return i;
+        }
+        throw new IllegalStateException("No spot for black");
+    }
+
+    public static int findPositionWhite(int w1, int w2, int b1, int b2) {
+        for (int i = 1; i < 5; i++) {
+            if (i != w1 && i != w2 && i != b1 && i != b2) return i;
+        }
+        throw new IllegalStateException("No spot for white");
+    }
+
     public static List<String> whiteMoves(String board) {
         List<String> moves = new ArrayList<>();
         int w1 = Character.getNumericValue(board.charAt(0));
@@ -99,29 +113,21 @@ public class MiniMax {
         if (w1 != 9) {
             if (w1 == 8) {
                 moves.add("9" + w2 + b1 + b2);
-            } else if (w1 + 1 != b1 && w1 + 1 != b2  && w1 + 1 != w2) {
+            } else if (w1 + 1 != b1 && w1 + 1 != b2 && w1 + 1 != w2) {
                 moves.add((w1 + 1) + "" + w2 + b1 + b2);
             } else if ((w1 + 2 != b1 && w1 + 2 != b2 && w1 + 2 != w2) || w1 + 2 == 9) {
                 int newW1 = w1 + 2;
                 if (w1 + 1 == b1) {
-                    if (8 != w1 && 8 != w2 && 8 != b2) b1 = 8;
-                    else if (7 != w1 && 7 != w2 && 7 != b2) b1 = 7;
-                    else if (6 != w1 && 6 != w2 && 6 != b2) b1 = 6;
-                    else if (5 != w1 && 5 != w2 && 5 != b2) b1 = 5;
+                    int jumped = findPositionBlack(newW1, w2, 10, b2);
+                    if (newW1 != jumped && newW1 != b2 && newW1 != w2) {
+                        moves.add("" + newW1 + w2 + jumped + b2);
+                    }
+                } else if (w1 + 1 == b2) {
+                    int jumped = findPositionBlack(newW1, w2, b1, 10);
+                    if (newW1 != jumped && newW1 != b1 && newW1 != w2) {
+                        moves.add("" + newW1 + w2 + b1 + jumped);
+                    }
                 }
-                if (w1 + 1 == b2) {
-                    if (8 != w1 && 8 != w2 && 8 != b1) b2 = 8;
-                    else if (7 != w1 && 7 != w2 && 7 != b1) b2 = 7;
-                    else if (6 != w1 && 6 != w2 && 6 != b1) b2 = 6;
-                    else if (5 != w1 && 5 != w2 && 5 != b1) b2 = 5;
-                }
-                moves.add(newW1 + "" + w2 + b1 + b2);
-            } else if ((w1 + 3 != w2 && w1 + 3 != b1 && w1 + 3 != b2) || w1 + 3 == 9) {
-                moves.add((w1 + 3) + "" + w2 + b1 + b2);
-            } else if ((w1 + 4 != w2 && w1 + 4 != b1 && w1 + 4 != b2) || w1 + 4 == 9) {
-                moves.add((w1 + 4) + "" + w2 + b1 + b2);
-            } else if ((w1 + 5 != w2 && w1 + 5 != b1 && w1 + 5 != b2) || w1 + 5 == 9) {
-                moves.add((w1 + 5) + "" + w2 + b1 + b2);
             }
         }
 
@@ -133,24 +139,16 @@ public class MiniMax {
             } else if ((w2 + 2 != w1 && w2 + 2 != b1 && w2 + 2 != b2) || w2 + 2 == 9) {
                 int newW2 = w2 + 2;
                 if (w2 + 1 == b1) {
-                    if (8 != w1 && 8 != w2 && 8 != b2) b1 = 8;
-                    else if (7 != w1 && 7 != w2 && 7 != b2) b1 = 7;
-                    else if (6 != w1 && 6 != w2 && 6 != b2) b1 = 6;
-                    else if (5 != w1 && 5 != w2 && 5 != b2) b1 = 5;
+                    int jumped = findPositionBlack(w1, newW2, 10, b2);
+                    if (newW2 != jumped && newW2 != b2 && newW2 != w1) {
+                        moves.add("" + w1 + newW2 + jumped + b2);
+                    }
+                } else if (w2 + 1 == b2) {
+                    int jumped = findPositionBlack(w1, newW2, b1, 10);
+                    if (newW2 != jumped && newW2 != b1 && newW2 != w1) {
+                        moves.add("" + w1 + newW2 + b1 + jumped);
+                    }
                 }
-                if (w2 + 1 == b2) {
-                    if (8 != w1 && 8 != w2 && 8 != b1) b2 = 8;
-                    else if (7 != w1 && 7 != w2 && 7 != b1) b2 = 7;
-                    else if (6 != w1 && 6 != w2 && 6 != b1) b2 = 6;
-                    else if (5 != w1 && 5 != w2 && 5 != b1) b2 = 5;
-                }
-                moves.add(w1 + "" + newW2 + b1 + b2);
-            } else if ((w2 + 3 != w1 && w2 + 3 != b1 && w2 + 3 != b2) || w2 + 3 == 9) {
-                moves.add(w1 + "" + (w2 + 3) + b1 + b2);
-            } else if ((w2 + 4 != w1 && w2 + 4 != b1 && w2 + 4 != b2) || w2 + 4 == 9) {
-                moves.add(w1 + "" + (w2 + 4) + b1 + b2);
-            } else if ((w2 + 5 != w1 && w2 + 5 != b1 && w2 + 5 != b2) || w2 + 5 == 9) {
-                moves.add(w1 + "" + (w2 + 5) + b1 + b2);
             }
         }
         return moves;
@@ -163,7 +161,6 @@ public class MiniMax {
         int b1 = Character.getNumericValue(board.charAt(2));
         int b2 = Character.getNumericValue(board.charAt(3));
 
-        // B1 move
         if (b1 != 0) {
             if (b1 == 1) {
                 moves.add("" + w1 + w2 + "0" + b2);
@@ -171,18 +168,8 @@ public class MiniMax {
                 moves.add("" + w1 + w2 + (b1 - 1) + b2);
             } else if ((b1 - 2 != w1 && b1 - 2 != w2 && b1 - 2 != b2) || b1 - 2 == 0) {
                 int newB1 = b1 - 2;
-                if (b1 - 1 == w1) {
-                    if (1 != b1 && 1 != b2 && 1 != w2) w1 = 1;
-                    else if (2 != b1 && 2 != b2 && 2 != w2) w1 = 2;
-                    else if (3 != b1 && 3 != b2 && 3 != w2) w1 = 3;
-                    else if (4 != b1 && 4 != b2 && 4 != w2) w1 = 4;
-                }
-                if (b1 - 1 == w2) {
-                    if (1 != b1 && 1 != b2 && 1 != w1) w2 = 1;
-                    else if (2 != b1 && 2 != b2 && 2 != w1) w2 = 2;
-                    else if (3 != b1 && 3 != b2 && 3 != w1) w2 = 3;
-                    else if (4 != b1 && 4 != b2 && 4 != w1) w2 = 4;
-                }
+                if (b1 - 1 == w1) w1 = findPositionWhite(10, w2, b1, b2);
+                if (b1 - 1 == w2) w2 = findPositionWhite(w1, 10, b1, b2);
                 moves.add("" + w1 + w2 + newB1 + b2);
             }
         }
@@ -194,18 +181,8 @@ public class MiniMax {
                 moves.add("" + w1 + w2 + b1 + (b2 - 1));
             } else if ((b2 - 2 != w1 && b2 - 2 != w2 && b2 - 2 != b1) || b2 - 2 == 0) {
                 int newB2 = b2 - 2;
-                if (b2 - 1 == w1) {
-                    if (1 != b1 && 1 != b2 && 1 != w2) w1 = 1;
-                    else if (2 != b1 && 2 != b2 && 2 != w2) w1 = 2;
-                    else if (3 != b1 && 3 != b2 && 3 != w2) w1 = 3;
-                    else if (4 != b1 && 4 != b2 && 4 != w2) w1 = 4;
-                }
-                if (b2 - 1 == w2) {
-                    if (1 != b1 && 1 != b2 && 1 != w1) w2 = 1;
-                    else if (2 != b1 && 2 != b2 && 2 != w1) w2 = 2;
-                    else if (3 != b1 && 3 != b2 && 3 != w1) w2 = 3;
-                    else if (4 != b1 && 4 != b2 && 4 != w1) w2 = 4;
-                }
+                if (b2 - 1 == w1) w1 = findPositionWhite(10, w2, b1, b2);
+                if (b2 - 1 == w2) w2 = findPositionWhite(w1, 10, b1, b2);
                 moves.add("" + w1 + w2 + b1 + newB2);
             }
         }
