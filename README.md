@@ -5,18 +5,10 @@ This project implements a basic Minimax algorithm (with and without alpha-beta p
 ## Board Encoding
 
 Each board state is encoded as a string of 4 digits:
-- `w1`, `w2`: Positions of the two white pieces (0–9; 9 = off board)
-- `b1`, `b2`: Positions of the two black pieces (0–9; 0 = off board)
+- w1, w2: Positions of the two white pieces (0–9; 9 = off board)
+- b1, b2: Positions of the two black pieces (0–9; 0 = off board)
 
-Example: `"2456"` means white pieces are at positions 2 and 4, and black at 5 and 6.
-
-## Features
-
-- `whiteMoves(String board)`: Generates all legal white moves.
-- `blackMoves(String board)`: Generates all legal black moves.
-- `staticEst(String board)`: Heuristic evaluation function using squared distance from goal.
-- `minimaxWhite / minimaxBlack`: Recursive Minimax implementations.
-- `isTerminal(String board)`: Checks if the game is over.
+Example: "2456" means white pieces are at positions 2 and 4, and black at 5 and 6.
 
 ## How to Run
 
