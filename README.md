@@ -13,6 +13,6 @@ Example: "2456" means white pieces are at positions 2 and 4, and black at 5 and 
 ## How to Run
 
 Compile and run using any Java IDE or command line:
-```bash
+
 javac Minimax.java
 java Minimax
