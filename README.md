@@ -1,4 +1,4 @@
-# Minimax Game Solver
+# Minimax AI Move Predictor
 
 This project implements a basic Minimax algorithm (with and without alpha-beta pruning) to evaluate a simplified two-player game where white and black pieces race toward opposite ends of a linear board. The board state is represented as a 4-digit string.
 
